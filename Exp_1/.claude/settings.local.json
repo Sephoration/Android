@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export JAVA_HOME=\"C:/Users/Eplis/AppData/Local/Programs/Android Studio/jbr\")",
+      "Bash(\"C:/Users/Eplis/gradle-8.5/bin/gradle\" -p \"C:/Git_Code/Android/Exp_1\" assembleDebug)",
+      "Bash(\"C:/Users/Eplis/AppData/Local/Android/Sdk/platform-tools/adb\" devices *)",
+      "Bash(C:/Users/Eplis/AppData/Local/Programs/Android Studio/bin/studio64.exe *)",
+      "Bash(pip install *)"
+    ]
+  }
+}
