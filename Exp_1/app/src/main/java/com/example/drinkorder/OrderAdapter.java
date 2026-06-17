@@ -35,16 +35,32 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvOrderTime.setText("下单时间：" + order.getOrderTime());
         holder.tvTotalPrice.setText("总价：¥" + String.format("%.2f", order.getTotalPrice()));
 
-        // 从JSON解析商品清单（格式：[{"product_name":"拿铁咖啡","quantity":2},...]）
         try {
             JSONArray itemsArray = new JSONArray(order.getItems());
             StringBuilder itemsText = new StringBuilder();
             for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject item = itemsArray.getJSONObject(i);
                 itemsText.append(item.getString("product_name"))
-                        .append(" x")
-                        .append(item.getInt("quantity"))
-                        .append("\n");
+                        .append(" x").append(item.getInt("quantity"));
+
+                String sweetness = item.optString("sweetness", "");
+                String ice = item.optString("ice", "");
+                String toppings = item.optString("toppings", "");
+
+                StringBuilder detail = new StringBuilder();
+                if (!sweetness.isEmpty()) detail.append(sweetness);
+                if (!ice.isEmpty()) {
+                    if (detail.length() > 0) detail.append("/");
+                    detail.append(ice);
+                }
+                if (!toppings.isEmpty()) {
+                    if (detail.length() > 0) detail.append("/");
+                    detail.append("+").append(toppings);
+                }
+                if (detail.length() > 0) {
+                    itemsText.append(" (").append(detail).append(")");
+                }
+                itemsText.append("\n");
             }
             holder.tvItems.setText(itemsText.toString());
         } catch (Exception e) {

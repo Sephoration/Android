@@ -9,11 +9,15 @@ public class CartItem {
     private double price;
     private String productName;
     private int imageResId;
+    private String sweetness;
+    private String ice;
+    private String toppings;
+    private double toppingsPrice;
 
     public CartItem() {
     }
 
-    public CartItem(int id, int userId, int productId, int quantity, double price, String productName, int imageResId) {
+    public CartItem(int id, int userId, int productId, int quantity, double price, String productName, int imageResId, String sweetness, String ice, String toppings, double toppingsPrice) {
         this.id = id;
         this.userId = userId;
         this.productId = productId;
@@ -21,6 +25,10 @@ public class CartItem {
         this.price = price;
         this.productName = productName;
         this.imageResId = imageResId;
+        this.sweetness = sweetness;
+        this.ice = ice;
+        this.toppings = toppings;
+        this.toppingsPrice = toppingsPrice;
     }
 
     public int getId() {
@@ -79,7 +87,39 @@ public class CartItem {
         this.imageResId = imageResId;
     }
 
+    public String getSweetness() {
+        return sweetness;
+    }
+
+    public void setSweetness(String sweetness) {
+        this.sweetness = sweetness;
+    }
+
+    public String getIce() {
+        return ice;
+    }
+
+    public void setIce(String ice) {
+        this.ice = ice;
+    }
+
+    public String getToppings() {
+        return toppings;
+    }
+
+    public void setToppings(String toppings) {
+        this.toppings = toppings;
+    }
+
+    public double getToppingsPrice() {
+        return toppingsPrice;
+    }
+
+    public void setToppingsPrice(double toppingsPrice) {
+        this.toppingsPrice = toppingsPrice;
+    }
+
     public double getTotalPrice() {
-        return price * quantity;
+        return (price + toppingsPrice) * quantity;
     }
 }

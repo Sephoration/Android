@@ -107,6 +107,10 @@ public class CartActivity extends AppCompatActivity {
                 itemJson.put("product_name", item.getProductName());
                 itemJson.put("quantity", item.getQuantity());
                 itemJson.put("price", item.getPrice());
+                itemJson.put("sweetness", item.getSweetness() != null ? item.getSweetness() : "");
+                itemJson.put("ice", item.getIce() != null ? item.getIce() : "");
+                itemJson.put("toppings", item.getToppings() != null ? item.getToppings() : "");
+                itemJson.put("toppings_price", item.getToppingsPrice());
                 itemsArray.put(itemJson);
                 totalPrice += item.getTotalPrice();
             }

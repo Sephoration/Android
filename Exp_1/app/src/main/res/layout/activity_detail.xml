@@ -118,6 +118,207 @@
 
             </LinearLayout>
 
+            <!-- 糖度选择 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="糖度选择"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rg_sweetness"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <RadioButton
+                        android:id="@+id/sweet_full"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="全糖"
+                        android:textSize="13sp" />
+
+                    <RadioButton
+                        android:id="@+id/sweet_70"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="七分糖"
+                        android:textSize="13sp"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/sweet_50"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="半糖"
+                        android:textSize="13sp" />
+
+                    <RadioButton
+                        android:id="@+id/sweet_30"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="三分糖"
+                        android:textSize="13sp" />
+
+                    <RadioButton
+                        android:id="@+id/sweet_0"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="无糖"
+                        android:textSize="13sp" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <!-- 加冰选择 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="冰量选择"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rg_ice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <RadioButton
+                        android:id="@+id/ice_extra"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="多冰"
+                        android:textSize="13sp" />
+
+                    <RadioButton
+                        android:id="@+id/ice_normal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="正常冰"
+                        android:textSize="13sp"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/ice_less"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="少冰"
+                        android:textSize="13sp" />
+
+                    <RadioButton
+                        android:id="@+id/ice_no"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="去冰"
+                        android:textSize="13sp" />
+
+                    <RadioButton
+                        android:id="@+id/ice_hot"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="热饮"
+                        android:textSize="13sp" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <!-- 加料选择 -->
+            <LinearLayout
+                android:id="@+id/layout_toppings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="加料（可多选）"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="12dp">
+
+                    <CheckBox
+                        android:id="@+id/topping_pearl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="珍珠 +¥2"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/topping_coconut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="椰果 +¥2"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/topping_red_bean"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="红豆 +¥2"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/topping_pudding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="布丁 +¥3"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/topping_grass_jelly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="仙草 +¥2"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

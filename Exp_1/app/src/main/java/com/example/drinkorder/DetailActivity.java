@@ -4,10 +4,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 商品详情页
@@ -17,9 +22,14 @@ public class DetailActivity extends AppCompatActivity {
     private ImageView ivProduct, ivBack;
     private TextView tvName, tvCategory, tvPrice, tvRating, tvDescription;
     private Button btnAddToCart;
+    private RadioGroup rgSweetness, rgIce;
+    private CheckBox cbPearl, cbCoconut, cbRedBean, cbPudding, cbGrassJelly;
     private DatabaseHelper dbHelper;
     private int productId;
     private int userId;
+
+    private static final double TOPPING_PRICE_NORMAL = 2.0;
+    private static final double TOPPING_PRICE_PUDDING = 3.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +38,6 @@ public class DetailActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
-        // 获取当前登录用户的ID
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
         userId = prefs.getInt("user_id", -1);
 
@@ -42,10 +51,16 @@ public class DetailActivity extends AppCompatActivity {
         tvRating = findViewById(R.id.tv_rating);
         tvDescription = findViewById(R.id.tv_description);
         btnAddToCart = findViewById(R.id.btn_add_to_cart);
+        rgSweetness = findViewById(R.id.rg_sweetness);
+        rgIce = findViewById(R.id.rg_ice);
+        cbPearl = findViewById(R.id.topping_pearl);
+        cbCoconut = findViewById(R.id.topping_coconut);
+        cbRedBean = findViewById(R.id.topping_red_bean);
+        cbPudding = findViewById(R.id.topping_pudding);
+        cbGrassJelly = findViewById(R.id.topping_grass_jelly);
 
         loadProductDetail();
 
-        // 返回按钮
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,20 +68,14 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        // 加入购物车 → 写入Cart表
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Product product = dbHelper.getProductById(productId);
-                if (product != null) {
-                    dbHelper.addToCart(userId, productId, 1, product.getPrice());
-                    Toast.makeText(DetailActivity.this, "已加入购物车", Toast.LENGTH_SHORT).show();
-                }
+                addToCart();
             }
         });
     }
 
-    /** 根据productId加载并展示商品详情 */
     private void loadProductDetail() {
         Product product = dbHelper.getProductById(productId);
         if (product != null) {
@@ -77,5 +86,62 @@ public class DetailActivity extends AppCompatActivity {
             tvDescription.setText(product.getDescription());
             ivProduct.setImageResource(product.getImageResId());
         }
+    }
+
+    private void addToCart() {
+        Product product = dbHelper.getProductById(productId);
+        if (product == null) return;
+
+        String sweetness = getSelectedSweetness();
+        String ice = getSelectedIce();
+        List<String> selectedToppings = getSelectedToppings();
+        String toppingsStr = String.join(",", selectedToppings);
+        double toppingsPrice = calculateToppingsPrice(selectedToppings);
+
+        dbHelper.addToCart(userId, productId, 1, product.getPrice(),
+                sweetness, ice, toppingsStr, toppingsPrice);
+        Toast.makeText(this, "已加入购物车", Toast.LENGTH_SHORT).show();
+    }
+
+    private String getSelectedSweetness() {
+        int id = rgSweetness.getCheckedRadioButtonId();
+        if (id == R.id.sweet_full) return "全糖";
+        if (id == R.id.sweet_70) return "七分糖";
+        if (id == R.id.sweet_50) return "半糖";
+        if (id == R.id.sweet_30) return "三分糖";
+        if (id == R.id.sweet_0) return "无糖";
+        return "七分糖";
+    }
+
+    private String getSelectedIce() {
+        int id = rgIce.getCheckedRadioButtonId();
+        if (id == R.id.ice_extra) return "多冰";
+        if (id == R.id.ice_normal) return "正常冰";
+        if (id == R.id.ice_less) return "少冰";
+        if (id == R.id.ice_no) return "去冰";
+        if (id == R.id.ice_hot) return "热饮";
+        return "正常冰";
+    }
+
+    private List<String> getSelectedToppings() {
+        List<String> toppings = new ArrayList<>();
+        if (cbPearl.isChecked()) toppings.add("珍珠");
+        if (cbCoconut.isChecked()) toppings.add("椰果");
+        if (cbRedBean.isChecked()) toppings.add("红豆");
+        if (cbPudding.isChecked()) toppings.add("布丁");
+        if (cbGrassJelly.isChecked()) toppings.add("仙草");
+        return toppings;
+    }
+
+    private double calculateToppingsPrice(List<String> toppings) {
+        double price = 0;
+        for (String t : toppings) {
+            if (t.equals("布丁")) {
+                price += TOPPING_PRICE_PUDDING;
+            } else {
+                price += TOPPING_PRICE_NORMAL;
+            }
+        }
+        return price;
     }
 }

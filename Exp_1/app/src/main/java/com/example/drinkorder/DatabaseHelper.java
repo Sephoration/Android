@@ -22,7 +22,7 @@ import java.util.Locale;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "drink_order.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // User表字段
     public static final String TABLE_USER = "User";
@@ -49,6 +49,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CART_PRODUCT_ID = "productId";
     public static final String COLUMN_CART_QUANTITY = "quantity";
     public static final String COLUMN_CART_PRICE = "price";
+    public static final String COLUMN_CART_SWEETNESS = "sweetness";
+    public static final String COLUMN_CART_ICE = "ice";
+    public static final String COLUMN_CART_TOPPINGS = "toppings";
+    public static final String COLUMN_CART_TOPPINGS_PRICE = "toppingsPrice";
 
     // Order表字段
     public static final String TABLE_ORDER = "Orders";
@@ -92,7 +96,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_CART_USER_ID + " INTEGER,"
                 + COLUMN_CART_PRODUCT_ID + " INTEGER,"
                 + COLUMN_CART_QUANTITY + " INTEGER,"
-                + COLUMN_CART_PRICE + " REAL"
+                + COLUMN_CART_PRICE + " REAL,"
+                + COLUMN_CART_SWEETNESS + " TEXT DEFAULT '',"
+                + COLUMN_CART_ICE + " TEXT DEFAULT '',"
+                + COLUMN_CART_TOPPINGS + " TEXT DEFAULT '',"
+                + COLUMN_CART_TOPPINGS_PRICE + " REAL DEFAULT 0"
                 + ")";
         db.execSQL(CREATE_CART_TABLE);
 
@@ -112,11 +120,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CART);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER);
-        onCreate(db);
+        if (oldVersion < 2) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCT);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CART);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER);
+            onCreate(db);
+            return;
+        }
+        if (oldVersion < 3) {
+            db.execSQL("ALTER TABLE " + TABLE_CART + " ADD COLUMN " + COLUMN_CART_SWEETNESS + " TEXT DEFAULT ''");
+            db.execSQL("ALTER TABLE " + TABLE_CART + " ADD COLUMN " + COLUMN_CART_ICE + " TEXT DEFAULT ''");
+            db.execSQL("ALTER TABLE " + TABLE_CART + " ADD COLUMN " + COLUMN_CART_TOPPINGS + " TEXT DEFAULT ''");
+            db.execSQL("ALTER TABLE " + TABLE_CART + " ADD COLUMN " + COLUMN_CART_TOPPINGS_PRICE + " REAL DEFAULT 0");
+        }
     }
 
     /** 初始化预置数据：管理员账号 + 8款饮品样本 */
@@ -311,15 +328,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return product;
     }
 
-    /** 加入购物车 — 若该商品已在购物车中则累加数量，否则新增 */
-    public long addToCart(int userId, int productId, int quantity, double price) {
+    /** 加入购物车 — 若相同商品且相同定制已在购物车中则累加数量，否则新增 */
+    public long addToCart(int userId, int productId, int quantity, double price, String sweetness, String ice, String toppings, double toppingsPrice) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(TABLE_CART, null,
-                COLUMN_CART_USER_ID + "=? AND " + COLUMN_CART_PRODUCT_ID + "=?",
-                new String[]{String.valueOf(userId), String.valueOf(productId)}, null, null, null);
+                COLUMN_CART_USER_ID + "=? AND " + COLUMN_CART_PRODUCT_ID + "=?"
+                        + " AND " + COLUMN_CART_SWEETNESS + "=?"
+                        + " AND " + COLUMN_CART_ICE + "=?"
+                        + " AND " + COLUMN_CART_TOPPINGS + "=?",
+                new String[]{String.valueOf(userId), String.valueOf(productId),
+                        sweetness, ice, toppings}, null, null, null);
         long id;
         if (cursor.moveToFirst()) {
-            // 已存在 → 增加数量
             int existingQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CART_QUANTITY));
             ContentValues values = new ContentValues();
             values.put(COLUMN_CART_QUANTITY, existingQuantity + quantity);
@@ -327,12 +347,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_CART_ID + "=?",
                     new String[]{String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CART_ID)))});
         } else {
-            // 不存在 → 插入新记录
             ContentValues values = new ContentValues();
             values.put(COLUMN_CART_USER_ID, userId);
             values.put(COLUMN_CART_PRODUCT_ID, productId);
             values.put(COLUMN_CART_QUANTITY, quantity);
             values.put(COLUMN_CART_PRICE, price);
+            values.put(COLUMN_CART_SWEETNESS, sweetness);
+            values.put(COLUMN_CART_ICE, ice);
+            values.put(COLUMN_CART_TOPPINGS, toppings);
+            values.put(COLUMN_CART_TOPPINGS_PRICE, toppingsPrice);
             id = db.insert(TABLE_CART, null, values);
         }
         cursor.close();
@@ -358,6 +381,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cartItem.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_CART_PRICE)));
                 cartItem.setProductName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
                 cartItem.setImageResId(cursor.getInt(cursor.getColumnIndexOrThrow("imageResId")));
+                cartItem.setSweetness(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CART_SWEETNESS)));
+                cartItem.setIce(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CART_ICE)));
+                cartItem.setToppings(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CART_TOPPINGS)));
+                cartItem.setToppingsPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_CART_TOPPINGS_PRICE)));
                 cartItemList.add(cartItem);
             } while (cursor.moveToNext());
         }
