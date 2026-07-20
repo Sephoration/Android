@@ -136,14 +136,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /** 初始化预置数据：管理员账号 + 8款饮品样本 */
+    /** 初始化预置数据：8款饮品样本 */
     private void initData(SQLiteDatabase db) {
-        ContentValues adminValues = new ContentValues();
-        adminValues.put(COLUMN_USER_USERNAME, "admin");
-        adminValues.put(COLUMN_USER_PASSWORD, hashPassword("123456"));
-        adminValues.put(COLUMN_USER_ROLE, "admin");
-        adminValues.put(COLUMN_USER_NICKNAME, "管理员");
-        db.insert(TABLE_USER, null, adminValues);
 
         // 咖啡类
         insertProduct(db, "拿铁咖啡", "咖啡", 28.0, 4.8, "浓郁的意式浓缩与丝滑牛奶的完美结合", R.drawable.coffee1);

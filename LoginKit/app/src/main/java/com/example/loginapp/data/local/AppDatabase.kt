@@ -32,10 +32,6 @@ abstract class AppDatabase : RoomDatabase() {
         private val SEED_ADMIN_CALLBACK = object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
-                // Seed admin account when database is first created
-                db.execSQL(
-                    "INSERT OR IGNORE INTO users (username, password) VALUES ('admin', 'admin123')"
-                )
             }
         }
     }

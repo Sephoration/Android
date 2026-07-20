@@ -2,11 +2,12 @@ package com.example.loginapp.data.repository
 
 import com.example.loginapp.data.local.UserDao
 import com.example.loginapp.data.model.User
+import com.example.loginapp.util.PasswordHash
 
 class UserRepository(private val userDao: UserDao) {
 
     suspend fun login(username: String, password: String): User? {
-        return userDao.login(username, password)
+        return userDao.login(username, PasswordHash.hash(password))
     }
 
     suspend fun register(username: String, password: String): RegistrationResult {
@@ -14,7 +15,7 @@ class UserRepository(private val userDao: UserDao) {
         return if (existingUser != null) {
             RegistrationResult.UsernameTaken
         } else {
-            userDao.insert(User(username = username, password = password))
+            userDao.insert(User(username = username, password = PasswordHash.hash(password)))
             RegistrationResult.Success
         }
     }
